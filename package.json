@@ -4,9 +4,17 @@
   "description": "Expense tracker CLI application",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "dev": "node src/dist/index.js",
     "build": "tsc",
     "build:watch": "tsc -w",
     "test": "test"
+  },  
+  "bin": {
+    "expense-tracker-cli": "./src/dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "expense-tracker-cli"
   },
   "keywords": [
     "expense",
