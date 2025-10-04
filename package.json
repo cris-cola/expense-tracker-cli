@@ -3,23 +3,27 @@
   "version": "1.0.0",
   "description": "Expense tracker CLI application",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "node src/dist/index.js",
+    "start": "node ./dist/index.js",
+    "dev": "ts-node src/index.ts",
     "build": "tsc",
     "build:watch": "tsc -w",
-    "test": "test"
-  },  
+    "prepare": "npm run build",
+    "test": "echo \"No tests configured\" && exit 0"
+  },
   "bin": {
-    "expense-tracker-cli": "./src/dist/index.js"
+    "expense-tracker": "./dist/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "expense-tracker-cli"
+    "url": "expense-tracker"
   },
   "keywords": [
     "expense",
     "tracker"
   ],
+  "dependencies": {
+    "commander": "14.0.1"
+  },
   "author": "",
   "license": "MIT",
   "devDependencies": {
