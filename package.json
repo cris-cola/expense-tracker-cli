@@ -5,7 +5,7 @@
   "author": "",
   "scripts": {
     "start": "node ./dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn src/index.ts",
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepare": "npm run build",
@@ -27,10 +27,12 @@
     "tracker"
   ],
   "dependencies": {
-    "commander": "14.0.1"
+    "commander": "14.0.1",
+    "numbro": "2.5.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "ts-node-dev": "^2.0.0"
   }
 }
