@@ -4,25 +4,28 @@ import { colorizeGreen, colorizeRed, getNextId } from "./utils";
 export function addExpense(description: string, amount: number) {
   const expenses = getExpenses();
   let newTaskId = getNextId(expenses.map(x => x.id));
-	const mockDate = new Date("August 17, 2025 03:24:00");
 	expenses.push({ 
 		id: newTaskId,
     description,
     amount,
-		createdAt: mockDate,
+		createdAt: new Date(),
 	});
-  const sortedTasks = [...expenses].sort((a, b) => a.id - b.id);
-	writeExpensesToFile(sortedTasks);
-	console.log(colorizeGreen(`${description} — $${amount.toFixed(2)}\nExpense added successfully (ID: ${newTaskId})`));
+  const sortedExpenses = [...expenses].sort((a, b) => a.id - b.id);
+	try{
+		writeExpensesToFile(sortedExpenses);
+		console.log(colorizeGreen(`${description} — $${amount.toFixed(2)}\nExpense added successfully (ID: ${newTaskId})`));
+	} catch(err) {
+		console.error(colorizeRed(`Could not add expense. Error:${err}`));
+	 }
 }
 
 export function deleteTask(expenseId: number) {
 	const expenses = getExpenses();
 	const expense = expenses.find(tsk => tsk.id === expenseId);
 	if(!expense) {
-		throw new Error(colorizeRed(`Can't delete expense (ID: ${expenseId}): not found`));
+		console.error(colorizeRed(`Can't delete expense (ID: ${expenseId}): not found`));
+		return;
 	}
-	
 	expenses.splice(expenses.indexOf(expense), 1);
 
 	writeExpensesToFile(expenses);
@@ -40,8 +43,8 @@ export function summaryExpenses(month?: string) {
 	if (month){
 		const monthExpenses = month ? expenses.filter( x => new Date(x.createdAt).toLocaleString('default', { month: 'long'}) === month): expenses;
 	 
-		if(month && monthExpenses.length === expenses.length){
-			console.error(`No expenses found for month: ${month}`);
+		if(expenses.length && monthExpenses.length === 0){
+			console.error(colorizeRed(`No expenses found for month: ${month}`));
 			return;
 		}
 		const monthTotal = monthExpenses.reduce((acc, item) => item.amount + acc, 0);
