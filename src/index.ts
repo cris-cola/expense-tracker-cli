@@ -1,12 +1,14 @@
 #! /usr/bin/env node
 // ^ That “shebang” line makes it runnable as an executable if you chmod +x it.
 
-// initStore();
-
 import { Command } from 'commander';
 import { parseMoney, parseMonth } from './validation';
+import { initStore } from './store';
+import { addExpense } from './execution';
 
-export function validateCommand(argv: string[]) {
+initStore();
+
+export function validateCommand() {
   const program = new Command();
 
   program
@@ -21,9 +23,7 @@ export function validateCommand(argv: string[]) {
     .option('-d, --description <text>', 'Description of the expense')
     .option('-a, --amount <value>', 'Expense amount', parseMoney, 1000)
     .action((options) => {
-      const description = options.description;
-      const amount: number = options.amount;
-      console.log(`Add: ${description} — ${amount.toFixed(2)}`);
+      addExpense(options.description, options.amount);
     });
   
   // $ expense-tracker delete an expense
@@ -89,8 +89,7 @@ function commanderExamples(program: Command){
 class App {
   static start () {
     try {
-      validateCommand(process.argv);
-			// executeCommand([command, ...args]);
+      validateCommand();
     } catch (err) {
       console.error((err as Error).message);
       process.exit(1);
@@ -99,4 +98,3 @@ class App {
 }
 
 App.start();
-

@@ -2,7 +2,9 @@ import numbro from "numbro";
 
 export function parseMonth(value: string) {
   console.log("month parsed, ", value);
-  return value;
+  const date = new Date();
+  const month = date.toLocaleString('deault', { month: 'long'});
+  return value === month ? value : `No expenses for month ${value} were found!`;
 }
 
 export function parseMoney(value: string): number {

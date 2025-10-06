@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "description": "Lunch",
+    "amount": 20,
+    "createdAt": "2025-10-06T12:42:25.253Z"
+  },
+  {
+    "id": 2,
+    "description": "Dinner",
+    "amount": 20,
+    "createdAt": "2025-10-06T12:43:22.623Z"
+  }
+]
