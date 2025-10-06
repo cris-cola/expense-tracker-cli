@@ -10,5 +10,17 @@
     "description": "Dinner",
     "amount": 20,
     "createdAt": "2025-10-06T12:43:22.623Z"
+  },
+  {
+    "id": 3,
+    "description": "Snacks",
+    "amount": 50,
+    "createdAt": "2025-08-17T01:24:00.000Z"
+  },
+  {
+    "id": 4,
+    "description": "Dinner",
+    "amount": 30,
+    "createdAt": "2025-08-17T01:24:00.000Z"
   }
 ]
