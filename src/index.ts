@@ -3,100 +3,87 @@
 
 // initStore();
 
-import { Command } from "commander";
-import numbro from "numbro";
-
-function parseMoney(value: string): number {
-  const parsedAmount = numbro.unformat(value);
-  if (!Number.isFinite(parsedAmount)) {
-    throw new Error(`Invalid number value: ${value}`);
-  }
-  return parsedAmount;
-}
+import { Command } from 'commander';
+import { parseMoney, parseMonth } from './validation';
 
 export function validateCommand(argv: string[]) {
   const program = new Command();
 
   program
     .name('expense-tracker-cli')
-    .description('CLI task tracker')
-    .version('1.0f.0');
+    .description('CLI expense tracker')
+    .version('1.0.0');
 
-  // expense-tracker add --description "Lunch" --amount 20
+  // $ expense-tracker add --description 'Lunch' --amount 20
   program
     .command('add')
-    .description('Add a new task')
-    .option("--description", "task description")
-    .argument("<string>")
-    .option("--amount")
-    .argument('<amount>', 'integer argument', parseMoney, 1000)
-    .action((description: string, amount: number) => {
+    .description('Add a new expense')
+    .option('-d, --description <text>', 'Description of the expense')
+    .option('-a, --amount <value>', 'Expense amount', parseMoney, 1000)
+    .action((options) => {
+      const description = options.description;
+      const amount: number = options.amount;
       console.log(`Add: ${description} — ${amount.toFixed(2)}`);
     });
-
-    /* program
-      .command('add')
-      .argument('<first>', 'integer argument', myParseInt)
-      .option("--second")
-      .argument('[second]', 'integer argument', myParseInt, 1000)
-      .action((first, second) => {
-        console.log(`${first} + ${second} = ${first + second}`);
-      })
-    ; */
-
-    program
-      .command('clone <source> [destination]')
-      .description('clone a repository into a newly created directory')
-      .action((source, destination) => {
-        console.log('clone command called');
-      });
-
-    program.command('split')
-      .description('Split a string into substrings and display as an array')
-      .argument('<string>', 'string to split')
-      .option('--first', 'display just the first substring')
-      .option('-s, --separatodr <chadr>', 'separator character', ',')
-      .action((str, options) => {
-        const limit = options.first ? 1 : undefined;
-       
-        console.log(str.split(options.separatodr, limit));
-      });
-
-/* 
+  
+  // $ expense-tracker delete an expense
   program
-    .command('delete <id>')
-    .description('Delete a task')
-    .action((id) => {
-      deleteTask(parseInt(id));
+    .command('delete')
+    .description('Delete an expense')
+    .option('--id <id>', 'Expense id', (v) => parseInt(v, 10))
+    .action((options) => {
+      const id: number = options.id;
+      console.log(`Delete expense id ${id}`);
     });
 
+  // $ expense-tracker list
   program
-    .command('list [status]')
-    .description('List tasks (optional: todo, in-progress, done)')
-    .action((status) => {
-      listTasks(status);
+    .command('list')
+    .description('List expenses')
+    .action(() => {
+      console.log('List expenses');
     });
 
+  // $ expense-tracker summary
   program
-    .command('update <id> <description>')
-    .description('Update task description')
-    .action((id, description) => {
-      updateTask(parseInt(id), description);
+    .command('summary')
+    .description('Summary of all expenses')
+    .option('-m, --month [month]', "Month's expenses", parseMonth)
+    .action((options) => {
+      const month = options.month;
+      console.log(`Expenses month ${month}`);
     });
-
-  program
-    .command('mark-done <id>')
-    .action((id) => {
-      markTask(parseInt(id), 'done');
-    });
-
-  program
-    .command('mark-in-progress <id>')
-    .action((id) => {
-      markTask(parseInt(id), 'in-progress');
-    }); */
-
+  commanderExamples(program);
   program.parse();
+}
+
+function commanderExamples(program: Command){
+  program
+    .command('adds')
+    .argument('<first>', 'integer argument', parseInt)
+    .option('--second')
+    .argument('[second]', 'integer argument', parseInt, 1000)
+    .action((first, second) => {
+      console.log(`${first} + ${second} = ${first + second}`);
+    });
+
+  program
+    .command('clone <source> [destination]')
+    .description('clone a repository into a newly created directory')
+    .action((source, destination) => {
+      console.log('clone command called');
+    });
+
+  program.command('split')
+    .description('Split a string into substrings and display as an array')
+    .argument('<string>', 'string to split')
+    .option('--first', 'display just the first substring')
+    .option('-s, --separatodr <chadr>', 'separator character', ',')
+    .action((str, options) => {
+      const limit = options.first ? 1 : undefined;
+      
+      console.log(str.split(options.separatodr, limit));
+    });
 }
 
 class App {
