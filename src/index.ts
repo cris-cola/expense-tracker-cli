@@ -3,7 +3,7 @@
 
 import { Command } from 'commander';
 import { parseMoney } from './validation';
-import { initStore } from './store';
+import { initStore, writeToCsv } from './store';
 import { addExpense, deleteTask, listExpenses, summaryExpenses } from './execution';
 
 initStore();
@@ -24,6 +24,7 @@ export function validateCommand() {
     .option('-a, --amount <value>', 'Expense amount', parseMoney, 1000)
     .action((options) => {
       addExpense(options.description, options.amount);
+      writeToCsv()
     });
   
   // $ expense-tracker delete an expense

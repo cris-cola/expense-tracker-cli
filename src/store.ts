@@ -1,11 +1,30 @@
 import fs from "fs";
 import { colorizeGreen } from "./utils";
-import { Expense } from "./types";
+import { Expense, ExpenseRecord } from "./types";
 
 const DEFAULT_STORE_FILENAME = "store.json";
 
 function getStoreFilename() {
 	return process.env.TASK_STORE_PATH ?? DEFAULT_STORE_FILENAME;
+}
+
+export function writeToCsv() {
+  const expenses: Expense[] = getExpenses();
+  const classProps = Object.keys(expenses[0] ?? {});
+  const expensesCsv: string[][] = [classProps];
+
+  for (let index = 0; index < expenses.length; index++) {
+    const expense = expenses[index];
+    // map headers to values for the CSV row (convert undefined to empty string)
+    const row = classProps.map((key) => {
+      const val = (expense as any)[key];
+      if (val === undefined || val === null) return '';
+      // keep dates as ISO strings; leave other values as-is
+      if (val instanceof Date) return val.toISOString();
+      return String(val);
+    });
+    expensesCsv[index + 1] = row;
+  }
 }
 
 export function initStore() {
