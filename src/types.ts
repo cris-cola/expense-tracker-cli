@@ -1,8 +1,19 @@
+import { getNextId } from "./utils";
+
 export type Expense = {
 	id: number;
 	description: string;
 	amount: number;
 	createdAt: Date;
+};
+
+export function makeExpense(description: string = "", amount: number = 0, ids: number[] = []) {
+	return {
+		id: getNextId(ids),
+		description,
+		amount,
+		createdAt: new Date()
+	}
 };
 
 const data: string[][] = [

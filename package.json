@@ -8,6 +8,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepare": "npm run build",
+    "typecheck" : "tsc --noEmit" ,
     "test": "echo \"No tests configured\" && exit 0"
   },
   "bin": {
@@ -27,7 +28,8 @@
   ],
   "dependencies": {
     "commander": "14.0.1",
-    "numbro": "2.5.0"
+    "numbro": "2.5.0",
+    "csv-parser": "3.2.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
