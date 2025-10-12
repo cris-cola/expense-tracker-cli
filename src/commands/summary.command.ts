@@ -15,7 +15,7 @@ export async function getExpensesSummary(month?: string) {
   const expenses = await readFromCsv();
   if(!expenses.length) consoleError("No expenses found!");
 
-  if (!month){
+  if(!month){
     const totalAmount = expenses.reduce((acc, item) => item.amount + acc, 0);
     consoleInfo(`Total expenses: $${totalAmount}`);
     return;
