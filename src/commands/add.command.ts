@@ -1,17 +1,15 @@
-import { readExpensesFromJson, writeExpensesToJson, writeExpensesToFileAsync, writeToCsv as writeExpensesToCsv } from "../store";
-import { makeExpense } from "../types";
-import { consoleError, consoleInfo } from "../utils";
+import { exportToCsv, readFromCsv } from "../store";
+import { consoleError, consoleInfo, makeExpense, getNextId } from "../utils";
 
-export function addExpense(description: string, amount: number) {
-  const expenses = readExpensesFromJson();
-  const newExpense = makeExpense(description, amount, expenses.map(x => x.id));
-  expenses.push(newExpense);
+export async function addExpense(description: string, amount: number) {
+  const expenses = await readFromCsv();
 
-  const sortedExpenses = [...expenses].sort((a, b) => a.id - b.id);
+  const nextId = getNextId(expenses.map(x => x.id));
+  expenses.push(makeExpense(description, amount, getNextId(expenses.map(x => x.id))));
+
   try{
-    writeExpensesToJson(sortedExpenses);
-    writeExpensesToCsv(sortedExpenses);
-    consoleInfo(`${description} — $${amount.toFixed(2)}\nExpense added successfully (ID: ${newExpense})`);
+    exportToCsv([...expenses].sort((a, b) => a.id - b.id));
+    consoleInfo(`${description} — $${amount.toFixed(2)}\nExpense added successfully (ID: ${nextId})`);
   } catch(err) {
     consoleError(`Could not add expense. Error: ${err}`);
    }

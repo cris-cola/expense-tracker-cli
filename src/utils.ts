@@ -14,19 +14,24 @@ export const consoleError = (text: string, err?: unknown) => console.error(color
 export function printExpenses(expenses: Expense[]) {
 	if(!expenses.length) consoleError("No expenses found!");
 	const output = expenses.map((exp) => `ID: ${exp.id}\nDESCRIPTION: ${exp.description}\nDATE: ${exp.createdAt}`);
-	consoleInfo(output.join('\n'));
+	consoleInfo(output.join('\n------------------------------\n'));
 }
 
-export function getNextId(ids: number[]){
-	if(ids.length === 0) return 1;
+export function toString(val: string | number | Date) {
+	if (val instanceof Date) return new Date(val).toISOString();
+	return val.toString(); 
+}
 
-	const sortedIds = [...ids].sort((a, b) => a - b);
-	let nextId = 1;
-
-	for (const id of sortedIds){
-		if (id > nextId) break;
-		if (id === nextId) nextId += 1;
+export function makeExpense(description: string = "", amount: number = 0, id: number = 1) {
+	return {
+		id,
+		description,
+		amount,
+		createdAt: new Date()
 	}
+};
 
-	return nextId;
+export function getNextId(ids: number[]) {
+	if(ids.length === 0) return 1;
+	return Math.max(...ids) + 1;
 }
