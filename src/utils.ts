@@ -1,5 +1,3 @@
-import { Expense } from "./types";
-
 // ANSI color codes
 const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
@@ -11,23 +9,18 @@ const colorizeRed = (text: string) => `${RED}${text}${RESET}`;
 export const consoleInfo = (text: string) => console.log(colorizeGreen(text));
 export const consoleError = (text: string, err?: unknown) => console.error(colorizeRed(text), err);
 
-export function printExpenses(expenses: Expense[]) {
-	if(!expenses.length) consoleError("No expenses found!");
-	const output = expenses.map((exp) => `ID: ${exp.id}\nDESCRIPTION: ${exp.description}\nAMOUNT: $${exp.amount}\nDATE: ${exp.createdAt.toDateString()}`);
-	consoleInfo(output.join('\n------------------------------\n'));
-}
-
 export function toString(val: string | number | Date) {
 	if (val instanceof Date) return new Date(val).toISOString();
 	return val.toString(); 
 }
 
-export function makeExpense(description: string = "", amount: number = 0, id: number = 1) {
+export function makeExpense(id?: number, description?: string, amount?: number, createdAt?: Date, updateAt?: Date) {
 	return {
-		id,
-		description,
-		amount,
-		createdAt: new Date()
+		id: id ?? 1,
+		description: description ?? "",
+		amount: amount ?? 0,
+		createdAt: (createdAt ?? new Date()),
+		updatedAt: (updateAt ?? new Date())
 	}
 };
 
