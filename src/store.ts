@@ -1,6 +1,6 @@
 import fs from "fs";
 import { Expense } from "./types";
-import { consoleError, consoleInfo, makeExpense, toString } from "./utils";
+import { consoleError, makeExpense, toString } from "./utils";
 import csvParser from "csv-parser";
 
 const DEFAULT_CSV_STORE_FILENAME = "store.csv";

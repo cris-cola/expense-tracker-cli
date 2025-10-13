@@ -24,17 +24,18 @@ export class Program {
     this.commands
       .command('add')
       .description('Add a new expense')
-      .option('-d, --description <text>', 'Description of the expense')
-      .option('-a, --amount <value>', 'Expense amount', parseMoney, 1000)
+      .requiredOption('-d, --description <text>', 'Description of the expense')
+      .requiredOption('-a, --amount <value>', 'Expense amount', parseMoney)
+      .option('-c, --category <text>', 'Expense category')
       .action((options) => {
-        addExpense(options.description, options.amount);
+        addExpense(options.description, options.amount, options.category);
       });
     
     // $ expense-tracker delete --id 2
    this.commands
       .command('delete')
       .description('Delete an expense')
-      .option('--id <value>', 'Expense id', (v) => parseInt(v, 10))
+      .requiredOption('--id <value>', 'Expense id', (v) => parseInt(v, 10))
       .action((options) => {
         deleteTask(options.id)
       });
@@ -43,19 +44,29 @@ export class Program {
     this.commands
       .command('update')
       .description('Update an expense')
-      .option('--id <value>', 'Expense id', (v) => parseInt(v, 10))
+      .requiredOption('--id <value>', 'Expense id', (v) => parseInt(v, 10))
       .option('-d, --description <text>', 'Description of the expense')
-      .option('-a, --amount <value>', 'Expense amount', parseMoney, 1000)
+      .option('-a, --amount <value>', 'Expense amount', parseMoney)
+      .option('-c, --category <text>', 'Expense category')
+      .hook('preAction', (thisCommand) => {
+        const options = thisCommand.opts();
+        const updateFields = ['description', 'amount', 'category'];
+        const providedFields = updateFields.filter(field => options[field] !== undefined);
+        
+        if (providedFields.length === 0) {
+          thisCommand.error('At least one update field must be provided (--description, --amount, or --category)');
+        }
+      })
       .action((options) => {
-        updateExpense(options.id, options.description, options.amount);
+        updateExpense(options.id, options.description, options.amount, options.category);
       });
 
     // $ expense-tracker list
     this.commands
       .command('list')
       .description('List expenses')
-      .action(async () => {
-        await listExpenses()
+      .action(() => {
+        listExpenses();
       });
 
     // $ expense-tracker summary --month 8

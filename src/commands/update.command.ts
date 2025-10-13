@@ -1,10 +1,11 @@
 import { exportToCsv, readFromCsv } from "../store";
 import { Expense, ExpenseUpdate } from "../types";
-import { consoleError, consoleInfo } from "../utils";
+import { consoleError, consoleInfo, filterUndefined } from "../utils";
 
-export async function updateExpense(id: number, description: string, amount: number) {
+export async function updateExpense(id: number, description?: string, amount?: number, category?: string) {
   const expenses = await readFromCsv();
-  const [updatedList, success] = updateExpenseById(id, expenses, { description, amount });
+  const undefied = filterUndefined({description, amount, category});
+  const [updatedList, success] = updateExpenseById(id, expenses, undefied);
   
   try {
     exportToCsv([...updatedList].sort((a, b) => a.id - b.id));
@@ -24,7 +25,7 @@ function updateExpenseById (
   const updatedList = expenses.map((expense) => {
     if (expense.id === id) {
       success = true
-      return { ...expense, ...updates, updateAt: new Date()};
+      return { ...expense, ...updates, updatedAt: new Date()};
     } 
     return expense
   });

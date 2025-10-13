@@ -1,7 +1,7 @@
 import { exportToCsv, readFromCsv } from "../store";
 import { consoleError, consoleInfo, makeExpense, getNextId } from "../utils";
 
-export async function addExpense(description: string, amount: number) {
+export async function addExpense(description: string, amount: number, category?: string) {
   const expenses = await readFromCsv();
 
   const nextId = getNextId(expenses.map(x => x.id));
