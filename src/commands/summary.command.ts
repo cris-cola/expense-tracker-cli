@@ -11,18 +11,21 @@ function getExpensesByMonth(month: string, expenses: Expense[]) {
     : expenses;
 }
 
-export async function getExpensesSummary(month?: string) {
+export async function getExpensesSummary(month: string) {
   const expenses = await readFromCsv();
   if(!expenses.length) consoleError("No expenses found!");
 
-  if(!month){
+  if(!month) {
     const totalAmount = expenses.reduce((acc, item) => item.amount + acc, 0);
     consoleInfo(`Total expenses: $${totalAmount}`);
     return;
   }
 
   const monthExpenses = getExpensesByMonth(month, expenses);
-  if(monthExpenses.length === 0) consoleError(`No expenses found for month: ${month}`);
+  if(monthExpenses.length === 0) {
+    consoleError(`No expenses found for month: ${month}`);
+    return;
+  }
 
   const monthTotal = monthExpenses.reduce((acc, item) => acc + item.amount, 0);
   consoleInfo(`Total expenses for ${month}: $${monthTotal}`);

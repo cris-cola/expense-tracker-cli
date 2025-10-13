@@ -28,3 +28,29 @@ export function getNextId(ids: number[]) {
 	if(ids.length === 0) return 1;
 	return Math.max(...ids) + 1;
 }
+
+export function isValidMonthNumber(num: number) {
+  return Number.isInteger(num) && num <= 12 && num >= 1;
+}
+
+export function isValidMonth(str: string): boolean {
+	return isAlphabetic(str) && isValidMonthName(str);
+}
+
+function isValidMonthName(str: string): boolean {
+  const fmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
+  const names = Array.from({ length: 12 }, (_, i) =>
+    fmt.format(new Date(2000, i, 1)).toLowerCase()
+  );
+  return names.includes(str.trim().toLowerCase());
+}
+
+function isAlphabetic(str: string): boolean {
+  return str
+    .trim()
+    .split('')
+    .every(ch => {
+      const code = ch.charCodeAt(0)
+      return (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
+    })
+}

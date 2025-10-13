@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { addExpense } from "./add.command";
 import { updateExpense } from "./update.command";
-import { parseMoney } from "../validation";
+import { parseMoney, parseMonth } from "../validation";
 import { deleteTask } from "./delete.command";
 import { listExpenses } from "./list.command";
 import { getExpensesSummary } from "./summary.command";
@@ -62,10 +62,9 @@ export class Program {
     this.commands
       .command('summary')
       .description('Summary of all expenses')
-      .option('-m, --month [text]', "Month's expenses")
+      .option('-m, --month [text]', "Month's expenses", parseMonth)
       .action((options) => {
-        const month = options.month;
-        getExpensesSummary(month ?? undefined);
+        getExpensesSummary(options.month ?? undefined);
       });
   }
 
