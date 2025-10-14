@@ -8,3 +8,7 @@ export type Expense = {
 	createdAt: Date;
 	updatedAt: Date;
 };
+
+export type Budget = {
+	amount: number;
+};

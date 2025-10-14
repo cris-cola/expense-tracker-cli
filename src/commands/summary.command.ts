@@ -1,6 +1,6 @@
 import { readFromCsv } from "../store";
 import { Expense } from "../types";
-import { consoleError, consoleInfo } from "../utils";
+import { consoleError, consoleInfo, getTotalAmount } from "../utils";
 
 function getExpensesByMonth(month: string, expenses: Expense[]) {
   const monthIndex = parseInt(month, 10);
@@ -16,8 +16,7 @@ export async function getExpensesSummary(month: string) {
   if(!expenses.length) consoleError("No expenses found!");
 
   if(!month) {
-    const totalAmount = expenses.reduce((acc, item) => item.amount + acc, 0);
-    consoleInfo(`Total expenses: $${totalAmount}`);
+    consoleInfo(`Total expenses: $${getTotalAmount(expenses)}`);
     return;
   }
 

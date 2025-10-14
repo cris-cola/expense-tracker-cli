@@ -62,15 +62,6 @@ export class Program {
         updateExpense(options.id, options.description, options.amount, options.category);
       });
 
-    // $ expense-tracker set-budget --a 'Lunch' --amount 20
-    this.commands
-      .command('set-budget')
-      .description('Set a budget')
-      .requiredOption('-a, --amount <value>', 'Budget amount', parseMoney)
-      .action((options) => {
-        setBudget(options.budget);
-      });
-    
     // $ expense-tracker list
     this.commands
       .command('list')
@@ -88,6 +79,16 @@ export class Program {
       .action((options) => {
         getExpensesSummary(options.month ?? undefined);
       });
+
+    // $ expense-tracker set-budget --a 'Lunch' --amount 20
+    this.commands
+      .command('set-budget')
+      .description('Set a budget')
+      .requiredOption('-a, --amount <value>', 'Budget amount', parseMoney)
+      .action((options) => {
+        setBudget(options.amount);
+      });
+    
   }
 
   run () {

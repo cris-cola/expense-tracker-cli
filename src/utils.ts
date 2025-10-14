@@ -1,3 +1,5 @@
+import { Expense } from "./types";
+
 // ANSI color codes
 const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
@@ -16,6 +18,13 @@ export function toString(val?: string | number | Date) {
 	if (val instanceof Date) return new Date(val).toISOString();
 	return val?.toString() ?? " "; 
 }
+export const getTotalAmount = (expenses: { amount: number }[]) => expenses.reduce((acc, item) => item.amount + acc, 0);
+
+export function createBudget(amount?: number) {
+	return {
+		amount: amount ?? 0
+	}
+};
 
 export function createExpense(id?: number, description?: string, amount?: number, category?: string, createdAt?: Date, updatedAt?: Date) {
 	return {

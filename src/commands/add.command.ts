@@ -1,9 +1,14 @@
-import { exportToCsv, readFromCsv } from "../store";
-import { consoleError, consoleInfo, createExpense, getNextId } from "../utils";
+import { exportToCsv, readBudgetFromCsv, readFromCsv } from "../store";
+import { consoleError, consoleInfo, createExpense, getNextId, getTotalAmount } from "../utils";
 
 export async function addExpense(description: string, amount: number, category?: string) {
   const expenses = await readFromCsv();
-
+  const budgetAmount = (await readBudgetFromCsv())?.amount ?? undefined;
+  
+  const totalAmount = getTotalAmount(expenses);
+  if(budgetAmount && totalAmount + amount > budgetAmount)
+    consoleError(`Budget exceeded by: ${totalAmount + amount - budgetAmount}`);
+  
   const nextId = getNextId(expenses.map(x => x.id));
   expenses.push(createExpense(nextId, description, amount, category));
 
