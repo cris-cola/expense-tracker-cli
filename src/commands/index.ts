@@ -1,9 +1,10 @@
 import { Command } from "commander";
 import { addExpense } from "./add.command";
-import { updateExpense } from "./update.command";
-import { parseMoney, parseMonth } from "../validation";
+import { setBudget } from "./budget.command";
 import { deleteTask } from "./delete.command";
 import { listExpenses } from "./list.command";
+import { updateExpense } from "./update.command";
+import { parseMoney, parseMonth } from "../validation";
 import { getExpensesSummary } from "./summary.command";
 
 export class Program {
@@ -61,19 +62,29 @@ export class Program {
         updateExpense(options.id, options.description, options.amount, options.category);
       });
 
+    // $ expense-tracker set-budget --a 'Lunch' --amount 20
+    this.commands
+      .command('set-budget')
+      .description('Set a budget')
+      .requiredOption('-a, --amount <value>', 'Budget amount', parseMoney)
+      .action((options) => {
+        setBudget(options.budget);
+      });
+    
     // $ expense-tracker list
     this.commands
       .command('list')
       .description('List expenses')
-      .action(() => {
-        listExpenses();
+      .option('-c, --category <text>', "Category's Expenses")
+      .action((options) => {
+        listExpenses(options.category);
       });
 
     // $ expense-tracker summary --month 8
     this.commands
       .command('summary')
       .description('Summary of all expenses')
-      .option('-m, --month [text]', "Month's expenses", parseMonth)
+      .option('-m, --month <text>', "Month's expenses", parseMonth)
       .action((options) => {
         getExpensesSummary(options.month ?? undefined);
       });

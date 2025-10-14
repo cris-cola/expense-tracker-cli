@@ -4,8 +4,7 @@ import { consoleError, consoleInfo, filterUndefined } from "../utils";
 
 export async function updateExpense(id: number, description?: string, amount?: number, category?: string) {
   const expenses = await readFromCsv();
-  const undefied = filterUndefined({description, amount, category});
-  const [updatedList, success] = updateExpenseById(id, expenses, undefied);
+  const [ updatedList, success ] = updateExpenseById(id, expenses, { description, amount, category });
   
   try {
     exportToCsv([...updatedList].sort((a, b) => a.id - b.id));
@@ -20,13 +19,17 @@ function updateExpenseById (
     id: number,
     expenses: Expense[],
     updates: ExpenseUpdate
-): [Expense[], boolean] {
+  ): [Expense[], boolean] {
+  
   let success = false;
   const updatedList = expenses.map((expense) => {
     if (expense.id === id) {
       success = true
-      return { ...expense, ...updates, updatedAt: new Date()};
-    } 
+      return { 
+        ...expense, 
+        ...filterUndefined(updates), 
+        updatedAt: new Date()};
+      } 
     return expense
   });
 

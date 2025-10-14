@@ -10,14 +10,14 @@ const colorizeGreen = (text: string) => `${GREEN}${text}${RESET}`;
 const colorizeRed = (text: string) => `${RED}${text}${RESET}`;
 
 export const consoleInfo = (text: string) => console.log(colorizeGreen(text));
-export const consoleError = (text: string, err?: unknown) => console.error(colorizeRed(text), err);
+export const consoleError = (text: string, err?: unknown) => console.error(colorizeRed(text), err ?? "");
 
 export function toString(val?: string | number | Date) {
 	if (val instanceof Date) return new Date(val).toISOString();
 	return val?.toString() ?? " "; 
 }
 
-export function makeExpense(id?: number, description?: string, amount?: number, category?: string, createdAt?: Date, updatedAt?: Date) {
+export function createExpense(id?: number, description?: string, amount?: number, category?: string, createdAt?: Date, updatedAt?: Date) {
 	return {
 		id: id ?? 1,
 		description: description ?? "",

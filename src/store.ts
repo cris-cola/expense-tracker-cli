@@ -1,13 +1,13 @@
 import fs from "fs";
 import { Expense } from "./types";
-import { consoleError, makeExpense, toString } from "./utils";
+import { consoleError, createExpense, toString } from "./utils";
 import csvParser from "csv-parser";
 
 const DEFAULT_CSV_STORE_FILENAME = "store.csv";
 const getStorePath = () => process.env.TASK_STORE_PATH ?? DEFAULT_CSV_STORE_FILENAME;
 
 export function exportToCsv(expenses: Expense[]) {
-  const data: string[][] = [Object.keys(makeExpense())];
+  const data: string[][] = [Object.keys(createExpense())];
   expenses.forEach(exp => data.push(Object.values(exp).map(x => toString(x))));
   writeToFileAsync(data.map(row => row.join(",")).join("\n"));
 }
