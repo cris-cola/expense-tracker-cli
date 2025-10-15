@@ -1,5 +1,4 @@
-import { exportBudgetToCsv, readBudgetFromCsv } from "../store";
-import { Budget } from "../types";
+import { exportBudgetToCsv } from "../store";
 import { consoleError, consoleInfo, createBudget, getNextId } from "../utils";
 
 export async function setBudget(amount: number) {

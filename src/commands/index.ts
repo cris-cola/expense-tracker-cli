@@ -6,6 +6,7 @@ import { listExpenses } from "./list.command";
 import { updateExpense } from "./update.command";
 import { parseMoney, parseMonth } from "../validation";
 import { getExpensesSummary } from "./summary.command";
+import { consoleError } from "../utils";
 
 export class Program {
   commands: Command;
@@ -88,11 +89,15 @@ export class Program {
       .action((options) => {
         setBudget(options.amount);
       });
-    
   }
 
   run () {
-    this.commands.parse();
+    try {
+      this.commands.parse();
+    } catch (err) {
+      consoleError((err as Error).message);
+      process.exit(1);
+    }
   }
 }
 
