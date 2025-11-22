@@ -16,6 +16,17 @@ export interface ExpenseRepository {
 	writeExpenses(expenses: Expense[]): Promise<void>;
 }
 
+export function serializeExpensesToCsv(expenses: Expense[]) {
+	const rows = [
+		EXPENSE_KEYS,
+		...expenses.map(expense =>
+			EXPENSE_KEYS.map(key => escapeCsvValue(toString(expense[key])))
+		)
+	];
+
+	return rows.map(row => row.join(",")).join("\n");
+}
+
 export class CsvExpenseRepository implements ExpenseRepository {
 	private readonly filePath: string;
 
@@ -48,14 +59,7 @@ export class CsvExpenseRepository implements ExpenseRepository {
 	}
 
 	async writeExpenses(expenses: Expense[]): Promise<void> {
-		const rows = [
-			EXPENSE_KEYS,
-			...expenses.map(expense =>
-				EXPENSE_KEYS.map(key => escapeCsvValue(toString(expense[key])))
-			)
-		];
-
-		const csv = rows.map(row => row.join(",")).join("\n");
+		const csv = serializeExpensesToCsv(expenses);
 		await fs.promises.writeFile(this.filePath, csv, "utf-8");
 	}
 }

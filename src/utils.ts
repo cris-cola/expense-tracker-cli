@@ -7,6 +7,7 @@ const RESET = '\x1b[0m';
 
 const fmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
 const MONTH_NAMES = Array.from({ length: 12 }, (_, i) => fmt.format(new Date(2000, i, 1)).toLowerCase());
+const dateFormatter = new Intl.DateTimeFormat('en-CA');
 
 const colorizeGreen = (text: string) => `${GREEN}${text}${RESET}`;
 const colorizeRed = (text: string) => `${RED}${text}${RESET}`;
@@ -19,6 +20,10 @@ export function toString(val?: string | number | Date) {
 	return val?.toString() ?? " "; 
 }
 export const getTotalAmount = (expenses: { amount: number }[]) => expenses.reduce((acc, item) => item.amount + acc, 0);
+
+export function formatDateDisplay(date: Date) {
+	return dateFormatter.format(date);
+}
 
 export function createBudget(amount?: number) {
 	return {

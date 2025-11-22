@@ -1,6 +1,7 @@
 import { Expense } from "../types";
 import { consoleError, consoleInfo, getTotalAmount } from "../utils";
 import { ExpenseRepository } from "../repositories/expense-repository";
+import { safeReadExpenses } from "../helpers/repository.helpers";
 
 export function getExpensesByMonth(month: string | undefined, expenses: Expense[]) {
   if (!month) return expenses;
@@ -13,8 +14,11 @@ export function getExpensesByMonth(month: string | undefined, expenses: Expense[
 }
 
 export async function getExpensesSummary(repo: ExpenseRepository, month?: string) {
-  const expenses = await repo.readExpenses();
-  if(!expenses.length) consoleError("No expenses found!");
+  const expenses = await safeReadExpenses(repo, "load expenses");
+  if (!expenses || expenses.length === 0) {
+    consoleError("No expenses found!");
+    return;
+  }
 
   if(!month) {
     consoleInfo(`Total expenses: $${getTotalAmount(expenses)}`);

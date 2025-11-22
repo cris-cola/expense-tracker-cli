@@ -1,8 +1,10 @@
 import { ExpenseRepository } from "../repositories/expense-repository";
+import { safeReadExpenses } from "../helpers/repository.helpers";
 import { consoleError, consoleInfo } from "../utils";
 
 export async function deleteTask(repo: ExpenseRepository, expenseId: number) {
-  const expenses = await repo.readExpenses();
+  const expenses = await safeReadExpenses(repo, "load expenses");
+  if (!expenses) return;
   const expense = expenses.find(exp => exp.id === expenseId);
   if(!expense) {
     consoleError(`Can't delete expense (ID: ${expenseId}): not found`);

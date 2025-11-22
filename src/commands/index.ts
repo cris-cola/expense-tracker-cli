@@ -6,6 +6,7 @@ import { listExpenses } from "./list.command";
 import { updateExpense } from "./update.command";
 import { parseMoney, parseMonth } from "../validation";
 import { getExpensesSummary } from "./summary.command";
+import { exportExpenses } from "./export.command";
 import { showUsageGuide } from "./usage.command";
 import { consoleError } from "../utils";
 import { CsvExpenseRepository, ExpenseRepository } from "../repositories/expense-repository";
@@ -92,6 +93,14 @@ export class Program {
       .requiredOption('-a, --amount <value>', 'Budget amount', parseMoney)
       .action((options) => {
         setBudget(options.amount);
+      });
+
+    this.commands
+      .command('export')
+      .description('Export expenses to CSV')
+      .option('-o, --output <path>', 'Destination path', 'expenses-export.csv')
+      .action(async (options) => {
+        await exportExpenses(this.expenseRepository, options.output);
       });
 
     this.commands

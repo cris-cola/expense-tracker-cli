@@ -1,9 +1,21 @@
 import { readBudgetFromCsv } from "../store";
 import { ExpenseRepository } from "../repositories/expense-repository";
+import { safeReadExpenses } from "../helpers/repository.helpers";
 import { consoleError, consoleInfo, createExpense, getNextId, getTotalAmount } from "../utils";
 
 export async function addExpense(repo: ExpenseRepository, description: string, amount: number, category?: string) {
-  const expenses = await repo.readExpenses();
+  if (!description?.trim()) {
+    consoleError("Description is required");
+    return;
+  }
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    consoleError("Amount must be a positive number");
+    return;
+  }
+
+  const expenses = await safeReadExpenses(repo, "load expenses");
+  if (!expenses) return;
   const budgetAmount = (await readBudgetFromCsv())?.amount ?? undefined;
   
   const totalAmount = getTotalAmount(expenses);

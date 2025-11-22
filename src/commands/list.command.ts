@@ -1,9 +1,11 @@
 import { Expense } from "../types";
-import { consoleError, consoleInfo } from "../utils";
+import { consoleError, consoleInfo, formatDateDisplay } from "../utils";
 import { ExpenseRepository } from "../repositories/expense-repository";
+import { safeReadExpenses } from "../helpers/repository.helpers";
 
 export async function listExpenses(repo: ExpenseRepository, category?: string): Promise<void> {
-  const expenses = await repo.readExpenses();
+  const expenses = await safeReadExpenses(repo, "load expenses");
+  if (!expenses) return;
 
   if(!expenses.length) {
     consoleInfo("No expenses found");
@@ -26,7 +28,7 @@ export async function listExpenses(repo: ExpenseRepository, category?: string): 
 function printExpenses(expenses: Expense[]) {
   const header = '# ID  Date         Description    Amount';
   const rows = expenses.map((exp) => {
-    const date = exp.createdAt.toISOString().split('T')[0];
+    const date = formatDateDisplay(exp.createdAt);
     return `# ${exp.id}   ${date}  ${exp.description}  $${exp.amount}`;
   });
   consoleInfo([header, ...rows].join('\n'));
