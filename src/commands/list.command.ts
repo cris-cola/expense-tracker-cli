@@ -6,7 +6,8 @@ export async function listExpenses(category?: string): Promise<void> {
   const expenses = await readFromCsv();
 
   if(!expenses.length) {
-    consoleError("No expenses found");
+    consoleError("No expenses found!");
+    return;
   } 
 
   let list = expenses;
@@ -23,6 +24,9 @@ export async function listExpenses(category?: string): Promise<void> {
 }
 
 function printExpenses(expenses: Expense[]) {
-	const output = expenses.map((exp) => `ID: ${exp.id}\nDESCRIPTION: ${exp.description}\nAMOUNT: $${exp.amount}\nDATE: ${exp.createdAt.toDateString()}`);
-	consoleInfo(output.join('\n------------------------------\n'));
+	consoleInfo('# ID  Date         Description    Amount');
+	expenses.forEach((exp) => {
+		const date = exp.createdAt.toISOString().split('T')[0];
+		consoleInfo(`# ${exp.id}   ${date}  ${exp.description}  $${exp.amount}`);
+	});
 }

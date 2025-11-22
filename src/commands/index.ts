@@ -6,6 +6,7 @@ import { listExpenses } from "./list.command";
 import { updateExpense } from "./update.command";
 import { parseMoney, parseMonth } from "../validation";
 import { getExpensesSummary } from "./summary.command";
+import { showHelp } from "./help.command";
 import { consoleError } from "../utils";
 
 export class Program {
@@ -88,6 +89,13 @@ export class Program {
       .requiredOption('-a, --amount <value>', 'Budget amount', parseMoney)
       .action((options) => {
         setBudget(options.amount);
+      });
+
+    this.commands
+      .command('help')
+      .description('Show usage examples')
+      .action(() => {
+        showHelp();
       });
   }
 
