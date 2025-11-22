@@ -1,13 +1,13 @@
-import { exportToCsv, readFromCsv } from "../store";
 import { Expense, ExpenseUpdate } from "../types";
 import { consoleError, consoleInfo, filterUndefined } from "../utils";
+import { ExpenseRepository } from "../repositories/expense-repository";
 
-export async function updateExpense(id: number, description?: string, amount?: number, category?: string) {
-  const expenses = await readFromCsv();
+export async function updateExpense(repo: ExpenseRepository, id: number, description?: string, amount?: number, category?: string) {
+  const expenses = await repo.readExpenses();
   const [ updatedList, success ] = updateExpenseById(id, expenses, { description, amount, category });
   
   try {
-    exportToCsv([...updatedList].sort((a, b) => a.id - b.id));
+    await repo.writeExpenses([...updatedList].sort((a, b) => a.id - b.id));
     if (success) consoleInfo(`Expense updated successfully (ID: ${id})`);
     else consoleError(`Expense with id ${id} could not be found`);
   } catch (err) {

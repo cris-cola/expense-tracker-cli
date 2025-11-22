@@ -1,12 +1,12 @@
-import { readFromCsv } from "../store";
 import { Expense } from "../types";
 import { consoleError, consoleInfo } from "../utils";
+import { ExpenseRepository } from "../repositories/expense-repository";
 
-export async function listExpenses(category?: string): Promise<void> {
-  const expenses = await readFromCsv();
+export async function listExpenses(repo: ExpenseRepository, category?: string): Promise<void> {
+  const expenses = await repo.readExpenses();
 
   if(!expenses.length) {
-    consoleError("No expenses found!");
+    consoleInfo("No expenses found");
     return;
   } 
 
@@ -19,14 +19,15 @@ export async function listExpenses(category?: string): Promise<void> {
       return;
     }
   }
-  
+	
   printExpenses(list);
 }
 
 function printExpenses(expenses: Expense[]) {
-	consoleInfo('# ID  Date         Description    Amount');
-	expenses.forEach((exp) => {
-		const date = exp.createdAt.toISOString().split('T')[0];
-		consoleInfo(`# ${exp.id}   ${date}  ${exp.description}  $${exp.amount}`);
-	});
+  const header = '# ID  Date         Description    Amount';
+  const rows = expenses.map((exp) => {
+    const date = exp.createdAt.toISOString().split('T')[0];
+    return `# ${exp.id}   ${date}  ${exp.description}  $${exp.amount}`;
+  });
+  consoleInfo([header, ...rows].join('\n'));
 }

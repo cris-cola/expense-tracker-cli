@@ -9,7 +9,7 @@
     "build:watch": "tsc -w",
     "prepare": "npm run build",
     "typecheck" : "tsc --noEmit" ,
-    "test": "echo \"No tests configured\" && exit 0"
+    "test": "npm run build && node --test ./dist/tests/*.test.js"
   },
   "bin": {
     "expense-tracker": "./bin/expense-tracker.js"

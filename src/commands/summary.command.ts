@@ -1,8 +1,9 @@
-import { readFromCsv } from "../store";
 import { Expense } from "../types";
 import { consoleError, consoleInfo, getTotalAmount } from "../utils";
+import { ExpenseRepository } from "../repositories/expense-repository";
 
-function getExpensesByMonth(month: string, expenses: Expense[]) {
+export function getExpensesByMonth(month: string | undefined, expenses: Expense[]) {
+  if (!month) return expenses;
   const monthIndex = parseInt(month, 10);
   if(!isNaN(monthIndex)) return expenses.filter(x => new Date(x.createdAt).getMonth() === monthIndex - 1 );
   
@@ -11,8 +12,8 @@ function getExpensesByMonth(month: string, expenses: Expense[]) {
     : expenses;
 }
 
-export async function getExpensesSummary(month: string) {
-  const expenses = await readFromCsv();
+export async function getExpensesSummary(repo: ExpenseRepository, month?: string) {
+  const expenses = await repo.readExpenses();
   if(!expenses.length) consoleError("No expenses found!");
 
   if(!month) {

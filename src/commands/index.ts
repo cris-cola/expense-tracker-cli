@@ -6,14 +6,17 @@ import { listExpenses } from "./list.command";
 import { updateExpense } from "./update.command";
 import { parseMoney, parseMonth } from "../validation";
 import { getExpensesSummary } from "./summary.command";
-import { showHelp } from "./help.command";
+import { showUsageGuide } from "./usage.command";
 import { consoleError } from "../utils";
+import { CsvExpenseRepository, ExpenseRepository } from "../repositories/expense-repository";
 
 export class Program {
   commands: Command;
+  private readonly expenseRepository: ExpenseRepository;
   
   constructor() {
     this.commands = new Command();
+    this.expenseRepository = new CsvExpenseRepository();
     this.buildCommands();
   }
 
@@ -30,8 +33,8 @@ export class Program {
       .requiredOption('-d, --description <text>', 'Description of the expense')
       .requiredOption('-a, --amount <value>', 'Expense amount', parseMoney)
       .option('-c, --category <text>', 'Expense category')
-      .action((options) => {
-        addExpense(options.description, options.amount, options.category);
+      .action(async (options) => {
+        await addExpense(this.expenseRepository, options.description, options.amount, options.category);
       });
     
     // $ expense-tracker delete --id 2
@@ -39,8 +42,8 @@ export class Program {
       .command('delete')
       .description('Delete an expense')
       .requiredOption('--id <value>', 'Expense id', (v) => parseInt(v, 10))
-      .action((options) => {
-        deleteTask(options.id)
+      .action(async (options) => {
+        await deleteTask(this.expenseRepository, options.id)
       });
 
     // $ expense-tracker update --description 'Lunch' --amount 20
@@ -60,8 +63,8 @@ export class Program {
           thisCommand.error('At least one update field must be provided (--description, --amount, or --category)');
         }
       })
-      .action((options) => {
-        updateExpense(options.id, options.description, options.amount, options.category);
+      .action(async (options) => {
+        await updateExpense(this.expenseRepository, options.id, options.description, options.amount, options.category);
       });
 
     // $ expense-tracker list
@@ -69,8 +72,8 @@ export class Program {
       .command('list')
       .description('List expenses')
       .option('-c, --category <text>', "Category's Expenses")
-      .action((options) => {
-        listExpenses(options.category);
+      .action(async (options) => {
+        await listExpenses(this.expenseRepository, options.category);
       });
 
     // $ expense-tracker summary --month 8
@@ -78,8 +81,8 @@ export class Program {
       .command('summary')
       .description('Summary of all expenses')
       .option('-m, --month <text>', "Month's expenses", parseMonth)
-      .action((options) => {
-        getExpensesSummary(options.month ?? undefined);
+      .action(async (options) => {
+        await getExpensesSummary(this.expenseRepository, options.month ?? undefined);
       });
 
     // $ expense-tracker set-budget --a 'Lunch' --amount 20
@@ -92,10 +95,10 @@ export class Program {
       });
 
     this.commands
-      .command('help')
-      .description('Show usage examples')
+      .command('usage')
+      .description('Show usage guide')
       .action(() => {
-        showHelp();
+        showUsageGuide();
       });
   }
 

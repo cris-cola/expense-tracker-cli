@@ -9,6 +9,15 @@ export type Expense = {
 	updatedAt: Date;
 };
 
+export const EXPENSE_KEYS: Array<keyof Expense> = [
+	'id',
+	'description',
+	'amount',
+	'category',
+	'createdAt',
+	'updatedAt'
+];
+
 export type Budget = {
 	amount: number;
 };
