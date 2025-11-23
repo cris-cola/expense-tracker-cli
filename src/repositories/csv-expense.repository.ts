@@ -2,6 +2,7 @@ import fs from "fs";
 import csvParser from "csv-parser";
 import { consoleError, toString } from "../utils";
 import { EXPENSE_KEYS, Expense } from "../types";
+import { IExpenseRepository } from "../interfaces";
 
 const DEFAULT_CSV_STORE_FILENAME = "store.csv";
 const getDefaultStorePath = () => process.env.TASK_STORE_PATH ?? DEFAULT_CSV_STORE_FILENAME;
@@ -9,11 +10,6 @@ const getDefaultStorePath = () => process.env.TASK_STORE_PATH ?? DEFAULT_CSV_STO
 function escapeCsvValue(value: string) {
 	const shouldQuote = value.includes(",") || value.includes("\"") || value.includes("\n");
 	return shouldQuote ? `"${value.replace(/"/g, '""')}"` : value;
-}
-
-export interface ExpenseRepository {
-	readExpenses(): Promise<Expense[]>;
-	writeExpenses(expenses: Expense[]): Promise<void>;
 }
 
 export function serializeExpensesToCsv(expenses: Expense[]) {
@@ -27,7 +23,7 @@ export function serializeExpensesToCsv(expenses: Expense[]) {
 	return rows.map(row => row.join(",")).join("\n");
 }
 
-export class CsvExpenseRepository implements ExpenseRepository {
+export class CsvExpenseRepository implements IExpenseRepository {
 	private readonly filePath: string;
 
 	constructor(filePath?: string) {

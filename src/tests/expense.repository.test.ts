@@ -3,7 +3,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { test } from "node:test";
-import { CsvExpenseRepository } from "../repositories/expense-repository";
+import { CsvExpenseRepository } from "../repositories/csv-expense.repository";
 import { createExpense } from "../utils";
 
 test("expense repository round trips CSV data", async () => {

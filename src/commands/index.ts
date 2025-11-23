@@ -1,119 +1,50 @@
-import { Command } from "commander";
-import { addExpense } from "./add.command";
-import { setBudget } from "./budget.command";
-import { deleteTask } from "./delete.command";
-import { listExpenses } from "./list.command";
-import { updateExpense } from "./update.command";
-import { parseMoney, parseMonth } from "../validation";
-import { getExpensesSummary } from "./summary.command";
-import { exportExpenses } from "./export.command";
-import { showUsageGuide } from "./usage.command";
+import { createAddCommand } from "./add.command";
+import { createBudgetCommand } from "./budget.command";
+import { createDeleteCommand } from "./delete.command";
+import { createListCommand } from "./list.command";
+import { createUpdateCommand } from "./update.command";
+import { createSummaryCommand } from "./summary.command";
+import { createExportCommand } from "./export.command";
+import { createUsageCommand } from "./usage.command";
 import { consoleError } from "../utils";
-import { CsvExpenseRepository, ExpenseRepository } from "../repositories/expense-repository";
+import { CsvExpenseRepository } from "../repositories/csv-expense.repository";
+import { ICommandRegistry, IExpenseRepository } from "../interfaces";
 
-export class Program {
-  commands: Command;
-  private readonly expenseRepository: ExpenseRepository;
+export class ExpenseTrackerCli {
+  private readonly registry: ICommandRegistry;
+  private readonly expenseRepository: IExpenseRepository;
   
-  constructor() {
-    this.commands = new Command();
-    this.expenseRepository = new CsvExpenseRepository();
+  constructor(registry: ICommandRegistry, expenseRepository: CsvExpenseRepository) {
+    this.registry = registry;
+    this.expenseRepository = expenseRepository;
     this.buildCommands();
   }
 
-  buildCommands() {
-    this.commands
+  private buildCommands() {
+    this.registry
       .name('expense-tracker')
       .description('Expense tracker CLI')
       .version('1.0.0');
 
-    // $ expense-tracker add --description 'Lunch' --amount 20
-    this.commands
-      .command('add')
-      .description('Add a new expense')
-      .requiredOption('-d, --description <text>', 'Description of the expense')
-      .requiredOption('-a, --amount <value>', 'Expense amount', parseMoney)
-      .option('-c, --category <text>', 'Expense category')
-      .action(async (options) => {
-        await addExpense(this.expenseRepository, options.description, options.amount, options.category);
-      });
-    
-    // $ expense-tracker delete --id 2
-   this.commands
-      .command('delete')
-      .description('Delete an expense')
-      .requiredOption('--id <value>', 'Expense id', (v) => parseInt(v, 10))
-      .action(async (options) => {
-        await deleteTask(this.expenseRepository, options.id)
-      });
+    const commands = [
+      createAddCommand(this.expenseRepository),
+      createDeleteCommand(this.expenseRepository),
+      createUpdateCommand(this.expenseRepository),
+      createListCommand(this.expenseRepository),
+      createSummaryCommand(this.expenseRepository),
+      createBudgetCommand(),
+      createExportCommand(this.expenseRepository),
+      createUsageCommand()
+    ];
 
-    // $ expense-tracker update --description 'Lunch' --amount 20
-    this.commands
-      .command('update')
-      .description('Update an expense')
-      .requiredOption('--id <value>', 'Expense id', (v) => parseInt(v, 10))
-      .option('-d, --description <text>', 'Description of the expense')
-      .option('-a, --amount <value>', 'Expense amount', parseMoney)
-      .option('-c, --category <text>', 'Expense category')
-      .hook('preAction', (thisCommand) => {
-        const options = thisCommand.opts();
-        const updateFields = ['description', 'amount', 'category'];
-        const providedFields = updateFields.filter(field => options[field] !== undefined);
-        
-        if (providedFields.length === 0) {
-          thisCommand.error('At least one update field must be provided (--description, --amount, or --category)');
-        }
-      })
-      .action(async (options) => {
-        await updateExpense(this.expenseRepository, options.id, options.description, options.amount, options.category);
-      });
-
-    // $ expense-tracker list
-    this.commands
-      .command('list')
-      .description('List expenses')
-      .option('-c, --category <text>', "Category's Expenses")
-      .action(async (options) => {
-        await listExpenses(this.expenseRepository, options.category);
-      });
-
-    // $ expense-tracker summary --month 8
-    this.commands
-      .command('summary')
-      .description('Summary of all expenses')
-      .option('-m, --month <text>', "Month's expenses", parseMonth)
-      .action(async (options) => {
-        await getExpensesSummary(this.expenseRepository, options.month ?? undefined);
-      });
-
-    // $ expense-tracker set-budget --a 'Lunch' --amount 20
-    this.commands
-      .command('set-budget')
-      .description('Set a budget')
-      .requiredOption('-a, --amount <value>', 'Budget amount', parseMoney)
-      .action((options) => {
-        setBudget(options.amount);
-      });
-
-    this.commands
-      .command('export')
-      .description('Export expenses to CSV')
-      .option('-o, --output <path>', 'Destination path', 'expenses-export.csv')
-      .action(async (options) => {
-        await exportExpenses(this.expenseRepository, options.output);
-      });
-
-    this.commands
-      .command('usage')
-      .description('Show usage guide')
-      .action(() => {
-        showUsageGuide();
-      });
+    commands.forEach((command) => {
+      this.registry.registerCommand(command);
+    });
   }
 
-  run () {
+  run(argv?: string[]) {
     try {
-      this.commands.parse();
+      this.registry.parse(argv);
     } catch (err) {
       consoleError((err as Error).message);
       process.exit(1);

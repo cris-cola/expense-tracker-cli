@@ -1,4 +1,5 @@
 import { consoleInfo } from "../utils";
+import { ICommandDefinition } from "../interfaces";
 
 export function showUsageGuide() {
   consoleInfo(`
@@ -37,4 +38,14 @@ Set a budget for a month:
 Export expenses to CSV:
   $ expense-tracker export
 `);
+}
+
+export function createUsageCommand(): ICommandDefinition {
+  return {
+    name: 'usage',
+    description: 'Show usage guide',
+    action: () => {
+      showUsageGuide();
+    }
+  };
 }

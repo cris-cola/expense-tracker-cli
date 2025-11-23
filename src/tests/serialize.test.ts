@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { test } from "node:test";
 import { createExpense } from "../utils";
-import { serializeExpensesToCsv } from "../repositories/expense-repository";
+import { serializeExpensesToCsv } from "../repositories/csv-expense.repository";
 
 test("serializeExpensesToCsv emits headers and values", () => {
   const expenses = [
