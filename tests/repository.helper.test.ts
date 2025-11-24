@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { test } from "node:test";
-import { withExpenses } from "../helpers/repository.helper";
-import { createExpense } from "../utils";
-import { IExpenseRepository } from "../interfaces";
+import { IExpenseRepository } from "../src/interfaces";
+import { createExpense } from "../src/utils";
+import { withExpenses } from "../src/helpers/repository.helper";
 
 test("withExpenses forwards loaded expenses to the handler", async () => {
   let handlerCalls = 0;

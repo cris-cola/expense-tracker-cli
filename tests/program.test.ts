@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { test } from "node:test";
-import { ExpenseTrackerCli } from "../commands/index";
-import { ICommandRegistry, ICommandDefinition } from "../interfaces";
-import { CsvExpenseRepository } from "../repositories/csv-expense.repository";
+import { CsvExpenseRepository } from "../src/repositories/csv-expense.repository";
+import { ExpenseTrackerCli } from "../src/commands";
+import { ICommandDefinition, ICommandRegistry } from "../src/interfaces";
 
 class TestRegistry implements ICommandRegistry {
 	public registeredCommands: string[] = [];
